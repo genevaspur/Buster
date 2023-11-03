@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=1920, initial-scale=1.0">
+    <title>buster</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<script src="scripts/jquery-3.2.1.min.js"></script>
+<script>
+
+    var HOST_URL = "";
+    var INPUT_KEY = "";
+    var RESET_TIMER = 5;
+    var TIMER_ID;
+    var okAudio = new Audio('sound/sound_ok.mp3');
+    var noAudio = new Audio('sound/sound_no.mp3');
+
+    // web 전용f
+    window.onkeydown = function(e) {
+        // 키보드 입력 후 엔터 들어옴
+        if (e.key == "Enter") {
+            sendCommuteInfo();
+        } else {
+            INPUT_KEY += e.key;
+        }
+    };
+
+    // function sendCommuteInfo(INPUT_KEY) {
+    function sendCommuteInfo() {
+
+        // web 전용
+        INPUT_KEY = INPUT_KEY.replaceAll("Shift", "");
+
+
+        // TODO 차량번호 입력
+
+
+
+        // if (INPUT_KEY.startsWith("{")) {
+        // if (INPUT_KEY.includes("@")) {
+            var splitKey = INPUT_KEY.split("@");
+            $.ajax({
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                url: HOST_URL + "/commute",
+                type: "POST",
+                // data: INPUT_KEY,
+                data: `{
+                    "compCd": "${splitKey[0]}",
+                    "userId": "${splitKey[1]}",
+                    "passValidTime": "${splitKey[2]}",
+                    "currentRemoteTime": "${splitKey[3]}"
+                }`,
+                // data: JSON.stringify({
+                //     compCd: splitKey[0],
+                //     userId: splitKey[1],
+                //     passValidTime: splitKey[2],
+                // }),
+                beforeSend: function () {
+                    // TODO 로딩
+                    // $("#loading").css("display", "block");
+                },
+                complete: function () {
+                    // $("#loading").css("display", "none");
+                    // 5초 후 초기화
+                    updateResetTimer(5);
+                },
+                success: function (data) {
+                    setInfo(data);
+                },
+                error: function (request, status, error) {
+                    if (request.status.code == 500) {
+                        // 서버 에러 발생 시
+                        // audioSoundNo();
+                        setInfo({
+                            valid: false,
+                            message: `서버 오류. 관리자 문의`
+                        })
+
+                    } else {
+                        // QR 파싱 불가 시
+                        // audioSoundNo();
+                        setInfo({
+                            valid: false,
+                            message: `미 인증 QR 코드`
+                        })
+                        updateResetTimer(5);
+
+                    }
+                }
+            });
+        // } else {
+        //     setInfo({
+        //         valid: false,
+        //         message: "잘못된 QR코드 입니다."
+        //     });
+        //     updateResetTimer(5);
+        // }
+
+        INPUT_KEY = "";
+    }
+
+    function startTimer() {
+        // 이미 실행 중인 타이머가 있다면 취소
+        if (TIMER_ID) {
+            clearTimeout(TIMER_ID);
+        }
+
+        // RESET_TIMER 값에 따라 타이머 시작
+        TIMER_ID = setTimeout(() => {
+            reset();
+        }, RESET_TIMER * 1000);
+    }
+
+    function updateResetTimer(newValue) {
+        RESET_TIMER = newValue;
+        startTimer();  // 타이머 재시작
+    }
+
+    function reset() {
+        var info = document.querySelector("#info em");
+        var okImage = document.querySelector(".info.accept .img .ok");
+        var noImage = document.querySelector(".info.accept .img .no");
+
+        $("#userId").text("사원번호");
+
+        if (info) {
+            info.textContent = "QR코드를 스캔해 주세요.";
+        }
+
+        if (okImage && noImage) {
+            okImage.style.display = "none";
+            noImage.style.display = "none";
+        }
+
+    }
+
+	 function setInfo(result) {
+		var info = document.querySelector(".info #info em");
+        info.textContent = result.message;
+        $("#userId").text(result.userId);
+
+		if (result.valid === true) {
+            Okimg();
+        }
+		else {
+            Noimg();
+        }
+	}
+
+	function Okimg() {
+		var okImage = document.querySelector(".info.accept .img .ok");
+		var noImage = document.querySelector(".info.accept .img .no");
+
+		if (okImage && noImage) {
+			okImage.style.display = "block";
+			noImage.style.display = "none";
+			audioSoundOk();
+		}
+	}
+	function Noimg() {
+		var okImage = document.querySelector(".info.accept .img .ok");
+		var noImage = document.querySelector(".info.accept .img .no");
+
+		if (okImage && noImage) {
+			okImage.style.display = "none";
+			noImage.style.display = "block";
+			audioSoundNo();
+		}
+	}
+
+	function audioSoundOk() {
+        resetAudio();
+        okAudio.play();
+		// var audio = document.getElementById('sound_ok');
+		// if (audio.paused) {
+		// 	audio.play();
+		// }else{
+		// 	audio.pause();
+		// 	audio.currentTime = 0
+		// }
+
+	}
+	function audioSoundNo() {
+        resetAudio();
+        noAudio.play();
+		// var audio = document.getElementById('sound_no');
+		// if (audio.paused) {
+		// 	audio.play();
+		// }else{
+		// 	audio.pause();
+		// 	audio.currentTime = 0
+		// }
+	}
+
+    function resetAudio() {
+        okAudio.pause();
+        okAudio.currentTime = 0;
+        noAudio.pause();
+        noAudio.currentTime = 0;
+    }
+
+	function callJavaFX() {
+		var javaFX = window.app;
+		if (javaFX) {
+			javaFX.callFromJS('Hello from JavaScript!');
+		}
+	}
+
+    function passengerDataTransfer() {
+        $("#b1").blur();
+        $.ajax({
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            url: HOST_URL + "/passenger-data-transfer",
+            type: "GET",
+            timeout: 5000,
+            beforeSend: function () {
+                // TODO 로딩
+                // $("#loading").css("display", "block");
+            },
+            complete: function () {
+                // $("#loading").css("display", "none");
+                // TODO 로딩
+            },
+            success: function (data) {
+                // alert("success");
+            },
+            error: function (request, status, error) {
+                // alert("success");
+            }
+        });
+    }
+
+    function commuteDataTransfer() {
+        $("#b2").blur();
+        $.ajax({
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            url: HOST_URL + "/commute-data-transfer",
+            type: "GET",
+            timeout: 5000,
+            beforeSend: function () {
+                // TODO 로딩
+                // $("#loading").css("display", "block");
+            },
+            complete: function () {
+                // $("#loading").css("display", "none");
+                // TODO 로딩
+            },
+            success: function (data) {
+                // alert("success");
+            },
+            error: function (request, status, error) {
+                // alert("success");
+            }
+        });
+    }
+</script>
+<body>
+    <div id="wrap">
+        <section>
+            <article class="info num">
+                <p id="userId" class="item"><em>사원번호</em></p>
+            </article>
+            <article class="info">
+                <p class="item" id="info"><em>QR코드를 스캔해 주세요.</em></p>
+            </article>
+            <article class="info accept">
+                <p class="img">
+                    <em class="no" id="noImg" style="font-size: 350px; color: #ff0000; display: none">X</em>
+                    <em class="ok" id="okImg" style="font-size: 350px; color: #00ffff; display: none">O</em>
+                    <!--TODO DELETE-->
+                    <img id="loading" src="images/loading.gif" alt="" style="display: none" >
+				</p>
+            </article>
+            <div class="tmp_button">
+<!--				<audio id='sound_ok' src='sound/sound_ok.mp3'></audio>-->
+<!--				<audio id='sound_no' src='sound/sound_no.mp3'></audio>-->
+                <button id="b1" class="gray" onclick="passengerDataTransfer();">승객 데이터 취득</button>
+                <button id="b2" class="gray" onclick="commuteDataTransfer();">탑승 이력 전송</button>
+            </div>
+        </section>
+    </div>
+</body>
+</html>

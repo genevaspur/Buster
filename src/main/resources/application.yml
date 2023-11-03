@@ -1,0 +1,31 @@
+server:
+  port: 9898
+spring:
+  r2dbc:
+    url: r2dbc:mariadb://127.0.0.1:3306/buster
+    username: root
+    password: root
+  application:
+    name: buster_agent
+
+buster:
+  target:
+    # TODO URL
+    url: http://0.0.0.0:5898
+    file-path: /home/buster/boarding_history/file
+    back-up-path: /home/buster/boarding_history/backup/
+    config-path: /home/buster/boarding_history/config/
+  agent:
+    file:
+#      ok-sound: static/sound/sound_ok.wav
+#      no-sound: static/sound/sound_no.wav
+    schedule:
+      commute: 300000 # 5분
+      get-passenger: 0 0 7 * * *
+      backup: 60000 # 1분
+
+#logging:
+#  level:
+#    io.r2dbc: DEBUG
+#    reactor.netty: DEBUG
+#    org.springframework.data.r2dbc: DEBUG

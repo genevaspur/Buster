@@ -1,0 +1,48 @@
+@charset "utf-8";
+/* @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css"); */
+
+/*@font-face {*/
+/*	font-family: 'Pretendard';*/
+/*	font-weight: 700;*/
+/*	font-display: swap;*/
+/*	src: local('Pretendard Bold'), url('fontard-Bold.subset.woff2') format('woff2'), url('fontard-Bold.subset.woff') format('woff');*/
+/*}*/
+
+/*@font-face {*/
+/*	font-family: 'Pretendard';*/
+/*	font-weight: 500;*/
+/*	font-display: swap;*/
+/*	src: local('Pretendard Medium'), url('fontard-Medium.subset.woff2') format('woff2'), url('fontard-Medium.subset.woff') format('woff');*/
+/*}*/
+
+/*@font-face {*/
+/*	font-family: 'Pretendard';*/
+/*	font-weight: 400;*/
+/*	font-display: swap;*/
+/*	src: local('Pretendard Regular'), url('fontard-Regular.subset.woff2') format('woff2'), url('fontard-Regular.subset.woff') format('woff');*/
+/*}*/
+
+html,body,div,section,article,h1,ul,li,p,label,form,input,button {margin:0;padding:0; box-sizing:border-box; line-height:1.7}
+html, body {width:100%; height:100%; font-size:1.5625vw; font-family:'Pretendard', 'Malgun Gothic', sans-serif; font-weight:500; color:#fff}
+body {background:#2C2C2E; overflow: hidden;}
+button, a {background:transparent; border:0; outline:0; cursor:pointer; font-size:inherit; font-family:'Pretendard', 'Malgun Gothic', sans-serif; }
+ul li {list-style: none;}
+em {font-style:normal; }
+.blue {color:#02205D}
+.cyan {color:#6DB2FF}
+
+
+#wrap {position:relative; display:flex; justify-content:center; align-items:center; padding:5vh 2.6041vw;}
+
+article.info {display:flex; align-items:center; justify-content:space-around; height:16vh; width:calc(100vw - 5.2082vw); margin-bottom:1.5vh; background:#0D0D0D; border-radius:0.7291vw; border:1px solid #707070}
+/* article.info:nth-last-of-type(1) {margin-bottom:0} */
+article.info.accept {height:54vh; }
+article.info.accept img {max-width:44vh}
+article.info p.item {display:flex; align-items:center; color:#6DB2FF; font-size:3vw;}
+article.info p.item em {font-size:4vw; color:#fff; font-weight:700; /*max-width:20vw; margin-left:1.5vw;  overflow:hidden; white-space:nowrap; text-overflow:ellipsis;*/}
+article.info.num p.item em {max-width:76vw; font-size:5vw}
+.accept .ok {color:#00CBBF}
+.accept .no {color:#FF4D42}
+
+.tmp_button {display:flex; justify-content:flex-end; }
+.tmp_button button {padding:0px 10px; margin-left:6px; background:#707070; color:#fff}
